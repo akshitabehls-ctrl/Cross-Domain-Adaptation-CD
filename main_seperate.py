@@ -202,12 +202,15 @@ encoder_da = ResNetSiameseEncoder(pretrained=True).to(device)   # Reconstruction
 ckpt = torch.load("best_recon_model.pth", map_location="cpu")
 encoder_da.load_state_dict(ckpt["encoder"], strict=False)
 
+# Freeze the reconstruction encoder
+for param in encoder_da.parameters():
+    param.requires_grad = False
+encoder_da.eval()
 
 decoder_weights = ckpt["decoder"]
-
 decoder.load_state_dict(decoder_weights, strict=False)
 
-print("Reconstruction encoder loaded into encoder_da")
+print("Reconstruction encoder loaded and frozen")
 
 
 ckpt = torch.load("../checkpoints/best_seperate_awda_resnet_whu.pth", map_location="cpu")
@@ -220,7 +223,6 @@ print("✅ LEVIR model loaded.")
 
 optimizer_enc = optim.Adam([
     {"params": encoder_cd.parameters(), "lr": 1e-4},
-    {"params": encoder_da.parameters(), "lr": 5e-5},  # slower
     {"params": decoder.parameters(), "lr": 1e-4},
 ])
 
@@ -304,12 +306,19 @@ scheduler_disc = torch.optim.lr_scheduler.CosineAnnealingLR(
     eta_min=1e-6
 )
 
+# --- CSV Logger Setup ---
+csv_log_path = "experiment_tracking.csv"
+if not os.path.isfile(csv_log_path):
+    with open(csv_log_path, mode='w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Epoch", "Train Sup Loss", "Train Unsup Loss", "Train Consist Loss", "Train DMN Loss", "Disc Acc", "Val F1", "Val IoU", "Val Precision", "Val Recall", "Val Acc"])
+
 epoch_mask_sum = 0
 epoch_total = 0
 
 for epoch in range(epochs):
     encoder_cd.train()
-    encoder_da.train()
+    encoder_da.eval() # Keep frozen during training
     decoder.train()
     discriminator.train()
 
@@ -318,6 +327,7 @@ for epoch in range(epochs):
 
     epoch_sup = 0.0
     epoch_unsup = 0.0
+    epoch_consist = 0.0
     epoch_dmn = 0.0
     disc_acc_epoch = 0
     epoch_cos = 0.0
@@ -477,6 +487,7 @@ for epoch in range(epochs):
         # logging
         epoch_sup += l_supervised.item()
         epoch_unsup += (l_unsup_weight * l_unsupervised).item()
+        epoch_consist += l_consist.item()
         epoch_dmn += (lambda_dmn * l_dmn).item()
         epoch_cos += cos_sim
         pbar.set_postfix({
@@ -506,6 +517,23 @@ for epoch in range(epochs):
     val_da = validate(encoder_da, decoder, whu_val_loader, metrics)
     print(f"[VAL] Epoch {epoch} WHU-Val Metrics: {val_metrics}")    
     print(f"[VAL] Epoch {epoch} WHU-Val Metrics: {val_da}")    
+
+    # --- Append to CSV Logger ---
+    with open(csv_log_path, mode='a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            epoch,
+            f"{epoch_sup/len(train_loader):.4f}",
+            f"{epoch_unsup/len(train_loader):.4f}",
+            f"{epoch_consist/len(train_loader):.4f}",
+            f"{epoch_dmn/len(train_loader):.4f}",
+            f"{disc_acc_epoch / len(train_loader):.4f}",
+            f"{val_metrics.get('F1', 0):.4f}",
+            f"{val_metrics.get('IoU', 0):.4f}",
+            f"{val_metrics.get('Precision', 0):.4f}",
+            f"{val_metrics.get('Recall', 0):.4f}",
+            f"{val_metrics.get('Accuracy', 0):.4f}"
+        ])
 
     scheduler.step()
     scheduler_disc.step()

@@ -226,7 +226,7 @@ optimizer_enc = optim.Adam([
     {"params": decoder.parameters(), "lr": 1e-4},
 ])
 
-opt_disc = optim.Adam(discriminator.parameters(), lr=1e-4)
+opt_disc = optim.Adam(discriminator.parameters(), lr=1e-5)
 awda = AWDA_Manager(device)
 metrics = CDMetrics(device=device)
 
@@ -373,7 +373,7 @@ for epoch in range(epochs):
         # Sinkhorn-Knopp pseudolabeling
         B, C, H, W = pred_t_w.shape
         flat_logits = pred_t_w.detach().permute(0, 2, 3, 1).reshape(-1, C)
-        q_soft = sinkhorn_knopp(flat_logits)
+        q_soft = sinkhorn_knopp(flat_logits, prior=[0.95, 0.05])
         q_soft = q_soft.reshape(B, H, W, C).permute(0, 3, 1, 2)
         
         max_prob_sinkhorn, pseudo_label = torch.max(q_soft, dim=1)
@@ -405,7 +405,7 @@ for epoch in range(epochs):
         l_out_cons = F.mse_loss(prob.detach(), torch.softmax(pred_t_s, dim=1))
         
         l_consist = l_feat_cons + l_out_cons
-        l_unsupervised = l_unsupervised + 0.5 * l_consist
+        l_unsupervised = l_unsupervised + 0.2 * l_consist
         # =========================================================
         # 4. DOMAIN DISCRIMINATOR TRAIN
         # =========================================================

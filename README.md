@@ -26,7 +26,7 @@
 
 ---
 
-# 📖 Overview
+# Overview
 
 Remote sensing change detection aims to identify meaningful structural and semantic changes between images of the same geographical region captured at different times.
 
@@ -43,7 +43,7 @@ This project addresses these challenges through **Unsupervised Domain Adaptation
 
 ---
 
-# ✨ Key Features
+# Key Features
 
 | Feature | Description |
 |---------|-------------|
@@ -58,7 +58,7 @@ This project addresses these challenges through **Unsupervised Domain Adaptation
 
 ---
 
-# 📰 Updates
+# Updates
 
 - Initial implementation released.
 - Added reconstruction-guided training.
@@ -98,7 +98,7 @@ Cross-Domain-Adaptation-CD
 
 ---
 
-# 🏛 Methodology
+# Methodology
 
 The proposed framework consists of:
 
@@ -182,7 +182,7 @@ pip install -r requirements.txt
 
 ---
 
-# 🚀 Training
+# Training
 
 Initial reconstruction training
 
@@ -198,7 +198,7 @@ python main_seperate.py
 
 ---
 
-# 🧪 Testing
+# Testing
 
 ```bash
 python test.py
@@ -212,7 +212,7 @@ python reconstruction_test.py
 
 ---
 
-# 📊 Experimental Results
+# Experimental Results
 
 ## Quantitative Results
 
@@ -242,7 +242,7 @@ python reconstruction_test.py
 
 ---
 
-# 📈 Future Work
+# Future Work
 
 - Vision Transformer based encoders
 - CLIP-based semantic representations
@@ -254,7 +254,7 @@ python reconstruction_test.py
 
 ---
 
-# 📚 Citation
+# Citation
 
 ```bibtex
 @misc{behl2026crossdomaincd,
@@ -267,7 +267,7 @@ python reconstruction_test.py
 
 ---
 
-# 🙏 Acknowledgements
+# Acknowledgements
 
 This project was inspired by recent work in:
 
@@ -282,7 +282,7 @@ Special thanks to **Dr. Ankit Jha** for guidance throughout the project.
 
 ---
 
-# 👩‍💻 Authors
+# Authors
 
 **Akshita Behl**  
 B.Tech Computer Science Engineering  

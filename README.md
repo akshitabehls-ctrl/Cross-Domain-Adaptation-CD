@@ -22,7 +22,9 @@
 <img src="assets/framework.png" width="900">
 </p>
 
-> **Architecture Overview** *(Replace with your pipeline figure from the report.)*
+> **Architecture Overview**
+> <img width="1340" height="660" alt="image" src="https://github.com/user-attachments/assets/4abff125-dcc1-4075-804e-832ebad236b8" />
+
 
 ---
 

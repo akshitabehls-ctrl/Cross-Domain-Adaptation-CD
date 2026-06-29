@@ -18,9 +18,6 @@
 
 > **Official PyTorch implementation** of a framework for **Cross-Domain Change Detection** using **Unsupervised Domain Adaptation (UDA)**. The framework combines a Siamese ResNet-50 encoder, reconstruction-guided learning, adversarial domain adaptation, Sinkhorn-based pseudo-label refinement, and consistency regularization to improve change detection across heterogeneous remote sensing datasets.
 
-<p align="center">
-<img src="assets/framework.png" width="900">
-</p>
 
 > **Architecture Overview**
 > <img width="1340" height="660" alt="image" src="https://github.com/user-attachments/assets/4abff125-dcc1-4075-804e-832ebad236b8" />
